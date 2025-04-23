@@ -1,0 +1,25 @@
+# Сборочные директории
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Visual Studio Code
+.vscode/
+
+# Бинарные и объектные файлы
+*.exe
+*.out
+*.o
+*.obj
+*.so
+*.a
+*.dll
+*.lib
+
+# Резервные и временные файлы
+*~
+*.swp
+.DS_Store
+Thumbs.db
