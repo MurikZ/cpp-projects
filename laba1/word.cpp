@@ -2,11 +2,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <ranges>
+#include <locale>
 
 using namespace std;
 
-// Объявление функции ДО ее использования
 size_t count_utf8_chars(const string& str);
 
 Stats analyzeFile(const string& filename) {
@@ -23,16 +22,34 @@ Stats analyzeFile(const string& filename) {
     stats.bytes = file.tellg();
     file.seekg(0);
 
-    // Устанавливаем локаль для корректной работы с UTF-8
+    // Проверяем, есть ли \n в конце файла
+    bool has_newline = false;
+    if (stats.bytes > 0) {
+        file.seekg(-1, ios::end);
+        char last_char;
+        file.get(last_char);
+        has_newline = (last_char == '\n');
+        file.seekg(0);
+    }
+
+    // Устанавливаем локаль
     setlocale(LC_ALL, "en_US.utf8");
-    ios_base::sync_with_stdio(false);
     locale utf8_locale("en_US.UTF-8");
     file.imbue(utf8_locale);
 
     string line;
     while (getline(file, line)) {
         stats.lines++;
-        stats.chars += count_utf8_chars(line) + 1; // +1 для \n
+        stats.chars += count_utf8_chars(line);
+        
+        // Добавляем +1 только если:
+        // 1) Это не последняя строка ИЛИ
+        // 2) В файле есть \n в конце
+        if (!file.eof() || has_newline) {
+            stats.chars++;
+        }
+
+        // Подсчёт слов
         stringstream ss(line);
         string word;
         while (ss >> word) {
@@ -44,11 +61,14 @@ Stats analyzeFile(const string& filename) {
     return stats;
 }
 
-
 size_t count_utf8_chars(const string& str) {
-    return ranges::count_if(str, [](char c) {
-        return (static_cast<unsigned char>(c) & 0xC0) != 0x80;
-    });
+    size_t count = 0;
+    for (char c : str) {
+        if ((static_cast<unsigned char>(c) & 0xC0) != 0x80) {
+            count++;
+        }
+    }
+    return count;
 }
 
 void printStats(const Stats& stats, const string& filename, const set<char>& options) {
