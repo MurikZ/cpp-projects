@@ -1,4 +1,4 @@
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(main main.cpp)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE number)
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})
+target_link_libraries(main PRIVATE number)
+target_include_directories(main PRIVATE ${PROJECT_SOURCE_DIR}/lib)

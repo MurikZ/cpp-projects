@@ -8,7 +8,7 @@ struct uint2022_t {
     static const int CAPACITY = 70; // 70 * 4 = 280 байт < 300 байт
     uint32_t data[CAPACITY] = {0};  // Массив 32-битных слов, младший разряд — data[0]
 };
-
+//проверка на количество байт
 static_assert(sizeof(uint2022_t) <= 300, "Size of uint2022_t must be no higher than 300 bytes");
 
 // Преобразование из uint32_t
