@@ -2,6 +2,7 @@
 #include <numeric>
 #include <lib/ArgParser.h>
 
+using namespace std;
 struct Options {
     bool sumMode = false;
     bool multMode = false;

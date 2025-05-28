@@ -8,7 +8,7 @@
 GrainSimulator::GrainSimulator(int columns, int rows)
     : columns(columns), rows(rows) {
     // Создаем сетку rows x columns, заполненную нулями
-    grid.assign(rows, std::vector<uint64_t>(columns, 0));
+    grid.assign(rows, std::vector<uint64_t>(columns, 0));//assign создает новый вектор с новыми значениями
 }
 
 // Загрузка начального состояния из файла
@@ -22,15 +22,15 @@ void GrainSimulator::importData(const std::string& path) {
     std::string line;
     // Читаем файл построчно
     while (std::getline(in, line)) {
-        std::istringstream iss(line);
+        std::istringstream iss(line);//читает данные из строки
         int x, y;          // Координаты ячейки
         uint64_t grains;   // Количество песчинок
         
         // Парсим строку формата "x y количество"
-        if (!(iss >> x >> y >> grains)) continue;
+        if (!(iss >> x >> y >> grains)) continue;//проверяем на правильность значения x,y,grains
         
         // Проверяем, что координаты в пределах сетки
-        if (y >= rows || x >= columns) continue;
+        if (y >= rows || x >= columns) continue;//если координаты за пределами сетки, пропускаем пропускаем такие строки
         
         // Добавляем песчинки в указанную ячейку
         grid[y][x] += grains;
@@ -39,12 +39,10 @@ void GrainSimulator::importData(const std::string& path) {
 
 // Проверка, достигла ли система равновесия
 bool GrainSimulator::checkEquilibrium() const {
-    // Проверяем все ячейки сетки
-    for (const auto& row : grid) {
-        for (uint64_t cell : row) {
-            // Если хотя бы в одной ячейке больше 3 песчинок,
-            // система не в равновесии
-            if (cell > 3) return false;
+    for (const auto& row : grid) {//проходимся по каждой строке
+        for (uint64_t cell : row) {//проходимся по каждому элементу строки
+        
+            if (cell > 3) return false;//больше 3, система нестабильна
         }
     }
     return true;  // Все ячейки стабильны
@@ -81,7 +79,7 @@ void GrainSimulator::redistribute() {
         }
     }
     
-    // Заменяем текущую сетку новой (используем move для оптимизации)
+    // Заменяем текущую сетку новой (используем move для оптимизации) move не копирует, а просто передает 
     grid = std::move(next);
 }
 
@@ -93,7 +91,7 @@ void GrainSimulator::execute(uint64_t maxIterations,
     for (uint64_t i = 0; i < maxIterations; ++i) {
         // Если задана частота сохранения и пришло время сохранять
         if (freq > 0 && i % freq == 0) {
-            // Сохраняем текущее состояние с номером итерации в имени файла
+            // Сохраняем текущее состояние с номером итерации в имени файла для наглядности действия
             exportBitmap(sourcePath + "_" + std::to_string(i));
         }
         

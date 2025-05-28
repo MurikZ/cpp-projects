@@ -2,15 +2,15 @@
 #include <sstream>
 
 namespace CommandLine {
-
+using namespace std;
 // Конструктор: сохраняет имя парсера (например, имя программы)
-CmdParser::CmdParser(const std::string& name)
+CmdParser::CmdParser(const  string& name)
     : name_(name) {}
 
 // Регистрация новой опции
 CmdParser::Entry& CmdParser::RegisterOption(Type t, char sk,
-                                            const std::string& kn,
-                                            const std::string& d) {
+                                            const  string& kn,
+                                            const  string& d) {
     entries_.push_back({});
     Entry& e = entries_.back();
     e.type = t;
@@ -33,7 +33,7 @@ CmdParser::Builder::Builder(CmdParser& p, size_t i)
     : parser_(p), idx_(i) {}
 
 // Задание значения по умолчанию (строка, число, флаг)
-CmdParser::Builder& CmdParser::Builder::WithDefault(const std::string& dv) {
+CmdParser::Builder& CmdParser::Builder::WithDefault(const  string& dv) {
     auto& e = parser_.entries_[idx_];
     e.hasDefault = true;
     e.defString = dv;
@@ -55,12 +55,12 @@ CmdParser::Builder& CmdParser::Builder::WithDefault(bool dv) {
 }
 
 // Сохраняем указатели на переменные, в которые будет записан результат
-CmdParser::Builder& CmdParser::Builder::SaveValue(std::string& out) {
+CmdParser::Builder& CmdParser::Builder::SaveValue( string& out) {
     parser_.entries_[idx_].ptrString = &out;
     return *this;
 }
 
-CmdParser::Builder& CmdParser::Builder::SaveValues(std::vector<std::string>& out) {
+CmdParser::Builder& CmdParser::Builder::SaveValues( vector< string>& out) {
     parser_.entries_[idx_].ptrStrings = &out;
     return *this;
 }
@@ -70,7 +70,7 @@ CmdParser::Builder& CmdParser::Builder::SaveValue(int& out) {
     return *this;
 }
 
-CmdParser::Builder& CmdParser::Builder::SaveValues(std::vector<int>& out) {
+CmdParser::Builder& CmdParser::Builder::SaveValues( vector<int>& out) {
     parser_.entries_[idx_].ptrInts = &out;
     return *this;
 }
@@ -96,41 +96,41 @@ CmdParser::Builder& CmdParser::Builder::PositionalParam() {
 
 // ===================== Быстрые методы регистрации опций ===================== //
 
-CmdParser::Builder CmdParser::AddStringParam(const std::string& k, const std::string& d) {
+CmdParser::Builder CmdParser::AddStringParam(const  string& k, const  string& d) {
     RegisterOption(Type::String, 0, k, d);
     return Builder(*this, entries_.size() - 1);
 }
-CmdParser::Builder CmdParser::AddStringParam(char sk, const std::string& k, const std::string& d) {
+CmdParser::Builder CmdParser::AddStringParam(char sk, const  string& k, const  string& d) {
     RegisterOption(Type::String, sk, k, d);
     return Builder(*this, entries_.size() - 1);
 }
 
-CmdParser::Builder CmdParser::AddIntParam(const std::string& k, const std::string& d) {
+CmdParser::Builder CmdParser::AddIntParam(const  string& k, const  string& d) {
     RegisterOption(Type::Int, 0, k, d);
     return Builder(*this, entries_.size() - 1);
 }
-CmdParser::Builder CmdParser::AddIntParam(char sk, const std::string& k, const std::string& d) {
+CmdParser::Builder CmdParser::AddIntParam(char sk, const  string& k, const  string& d) {
     RegisterOption(Type::Int, sk, k, d);
     return Builder(*this, entries_.size() - 1);
 }
 
-CmdParser::Builder CmdParser::AddFlagParam(const std::string& k, const std::string& d) {
+CmdParser::Builder CmdParser::AddFlagParam(const  string& k, const  string& d) {
     RegisterOption(Type::Flag, 0, k, d);
     return Builder(*this, entries_.size() - 1);
 }
-CmdParser::Builder CmdParser::AddFlagParam(char sk, const std::string& k, const std::string& d) {
+CmdParser::Builder CmdParser::AddFlagParam(char sk, const  string& k, const  string& d) {
     RegisterOption(Type::Flag, sk, k, d);
     return Builder(*this, entries_.size() - 1);
 }
 
-CmdParser::Builder CmdParser::AddHelpParam(char sk, const std::string& k, const std::string& d) {
+CmdParser::Builder CmdParser::AddHelpParam(char sk, const  string& k, const  string& d) {
     RegisterOption(Type::Help, sk, k, d);
     return Builder(*this, entries_.size() - 1);
 }
 
 // ===================== Парсинг аргументов ===================== //
 
-bool CmdParser::Parse(const std::vector<std::string>& args) {
+bool CmdParser::Parse(const  vector< string>& args) {
     // Обнуляем значения
     for (auto& e : entries_) {
         e.isSet = false;
@@ -152,7 +152,7 @@ bool CmdParser::Parse(const std::vector<std::string>& args) {
         if (a.rfind("--", 0) == 0) {
             if (a == "--help") { helpFlag_ = true; continue; }
             auto eq = a.find('=');
-            std::string key = a.substr(2, eq - 2);
+             string key = a.substr(2, eq - 2);
             if (!longMap_.count(key)) return false;
             Entry* e = &entries_[longMap_[key]];
 
@@ -160,14 +160,14 @@ bool CmdParser::Parse(const std::vector<std::string>& args) {
                 e->valBool = true;
                 e->isSet = true;
             } else {
-                if (eq == std::string::npos) return false;
-                std::string v = a.substr(eq + 1);
+                if (eq ==  string::npos) return false;
+                 string v = a.substr(eq + 1);
                 if (e->type == Type::String) {
                     if (e->allowMultiple) e->valStrings.push_back(v);
                     else e->valString = v;
                 } else if (e->type == Type::Int) {
                     try {
-                        int iv = std::stoi(v);
+                        int iv =  stoi(v);
                         if (e->allowMultiple) e->valInts.push_back(iv);
                         else e->valInt = iv;
                     } catch (...) { return false; }
@@ -184,13 +184,13 @@ bool CmdParser::Parse(const std::vector<std::string>& args) {
                 char sk = a[1];
                 if (!shortMap_.count(sk)) return false;
                 Entry* e = &entries_[shortMap_[sk]];
-                std::string v = a.substr(3);
+                 string v = a.substr(3);
                 if (e->type == Type::String) {
                     if (e->allowMultiple) e->valStrings.push_back(v);
                     else e->valString = v;
                 } else if (e->type == Type::Int) {
                     try {
-                        int iv = std::stoi(v);
+                        int iv =  stoi(v);
                         if (e->allowMultiple) e->valInts.push_back(iv);
                         else e->valInt = iv;
                     } catch (...) { return false; }
@@ -219,7 +219,7 @@ bool CmdParser::Parse(const std::vector<std::string>& args) {
                 else e->valString = a;
             } else if (e->type == Type::Int) {
                 try {
-                    int iv = std::stoi(a);
+                    int iv =  stoi(a);
                     if (e->allowMultiple) e->valInts.push_back(iv);
                     else e->valInt = iv;
                 } catch (...) { return false; }
@@ -258,7 +258,7 @@ bool CmdParser::Parse(const std::vector<std::string>& args) {
 
 // Обёртка над Parse
 bool CmdParser::Parse(int argc, char** argv) {
-    std::vector<std::string> args(argv, argv + argc);
+     vector< string> args(argv, argv + argc);
     return Parse(args);
 }
 
@@ -268,14 +268,14 @@ bool CmdParser::ShowHelp() const {
 }
 
 // Строка с названием программы (можно дополнить usage позже)
-std::string CmdParser::Usage() const {
-    std::ostringstream out;
+ string CmdParser::Usage() const {
+     ostringstream out;
     out << name_ << "\n";
     return out.str();
 }
 
 // Получение значения параметров
-std::string CmdParser::FetchString(const std::string& k) const {
+ string CmdParser::FetchString(const  string& k) const {
     auto it = longMap_.find(k);
     if (it == longMap_.end()) return {};
     const Entry& e = entries_[it->second];
@@ -284,7 +284,7 @@ std::string CmdParser::FetchString(const std::string& k) const {
     return e.valString;
 }
 
-int CmdParser::FetchInt(const std::string& k) const {
+int CmdParser::FetchInt(const  string& k) const {
     auto it = longMap_.find(k);
     if (it == longMap_.end()) return 0;
     const Entry& e = entries_[it->second];
@@ -293,14 +293,14 @@ int CmdParser::FetchInt(const std::string& k) const {
     return e.valInt;
 }
 
-int CmdParser::FetchInt(const std::string& k, size_t idx) const {
+int CmdParser::FetchInt(const  string& k, size_t idx) const {
     auto it = longMap_.find(k);
     if (it == longMap_.end()) return 0;
     const Entry& e = entries_[it->second];
     return (e.allowMultiple && idx < e.valInts.size()) ? e.valInts[idx] : 0;
 }
 
-bool CmdParser::FetchFlag(const std::string& k) const {
+bool CmdParser::FetchFlag(const  string& k) const {
     auto it = longMap_.find(k);
     if (it == longMap_.end()) return false;
     const Entry& e = entries_[it->second];

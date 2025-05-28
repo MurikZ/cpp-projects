@@ -4,16 +4,16 @@
 #include <optional>
 #include <string_view>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) {  
     try {
         // Аргументы командной строки
-        std::optional<int> numRows, numCols, iterationCap, snapshotStep;
+        std::optional<int> numRows, numCols, iterationCap, snapshotStep;//optional - значение могут быть не заданы
         std::string sourcePath, resultPath;
 
         for (int i = 1; i < argc; ++i) {
-            std::string_view argument = argv[i];
+            std::string_view argument = argv[i];//string_view не копирует, а просто ссылается на элемент
             if (argument == "--length") {
-                if (++i < argc) {
+                if (++i < argc) {//обрабатывает значение после --length
                     numRows = std::stoi(argv[i]);
                 }
             } else if (argument == "--width") {
