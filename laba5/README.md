@@ -12,26 +12,10 @@
 - Разделение логики по отдельным классам — легко расширять и тестировать.
 
 
-## Пример использования
+## Парсинг
 
-```cpp
-#include "ArgParser.h"
-
-int main(int argc, char** argv) {
-    ArgParser parser;
-    parser.addOption(new Option("input", "default.txt", true));
-    parser.addFlag(new Flag("verbose"));
-    parser.addPositional(new Positional(0));
-
-    parser.parse(argc, argv);
-
-    std::string inputFile = parser.getValue("input");
-    bool verbose = parser.getFlag("verbose");
-    std::string command = parser.getPositional(0);
-
-    // ... дальнейшая логика
-}
-```
+В процессе парсинга (Parse) происходит разбор аргументов, их проверка и сохранение значений в заранее связанные переменные.
+После успешного парсинга можно получить значения параметров через методы FetchString, FetchInt, FetchFlag
 
 
 

@@ -20,9 +20,9 @@ public:
 
     // Fetch parsed values
     std::string FetchString(const std::string& key) const;
-    int         FetchInt(const std::string& key) const;
-    int         FetchInt(const std::string& key, size_t idx) const;
-    bool        FetchFlag(const std::string& key) const;
+    int FetchInt(const std::string& key) const;
+    int  FetchInt(const std::string& key, size_t idx) const;
+    bool FetchFlag(const std::string& key) const;
 
     // Builder
     class Builder;

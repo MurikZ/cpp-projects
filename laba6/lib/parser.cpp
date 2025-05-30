@@ -5,7 +5,7 @@
 using namespace std;
 namespace confx {
 
-// ---------- Node implementation ----------
+// 
 
 const Element& Node::Find(const string& key) const {
     auto it = items.find(key);

@@ -24,7 +24,7 @@ CmdParser::Entry& CmdParser::RegisterOption(Type t, char sk,
     return e;
 }
 
-// Builder implementations
+// значения по умолчанию
 CmdParser::Builder::Builder(CmdParser& p, size_t i)
     : parser_(p), idx_(i) {}
 
@@ -48,7 +48,7 @@ CmdParser::Builder& CmdParser::Builder::WithDefault(bool dv) {
     e.defBool = dv;
     return *this;
 }
-
+//сохранение значений
 CmdParser::Builder& CmdParser::Builder::SaveValue(std::string& out) {
     parser_.entries_[idx_].ptrString = &out;
     return *this;
@@ -73,7 +73,7 @@ CmdParser::Builder& CmdParser::Builder::SaveValue(bool& out) {
     parser_.entries_[idx_].ptrBool = &out;
     return *this;
 }
-
+//разшеть множественный выбор
 CmdParser::Builder& CmdParser::Builder::Multiple(size_t mc) {
     auto& e = parser_.entries_[idx_];
     e.allowMultiple = true;
@@ -86,7 +86,7 @@ CmdParser::Builder& CmdParser::Builder::PositionalParam() {
     return *this;
 }
 
-// Registration shortcuts
+// регистрация элементов , нужно для удобства (чтобы не указывать тип)
 CmdParser::Builder CmdParser::AddStringParam(const std::string& k,
                                              const std::string& d) {
     RegisterOption(Type::String, 0, k, d);
